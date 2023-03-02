@@ -18,7 +18,7 @@ export const Title = ({ onChange, title, fontSize, bold, width }: Props) => {
     useComponentVisible(false);
   const [value, setValue] = useState(title);
 
-  useEffect(() => setValue(title, [title]));
+  useEffect(() => setValue(title), [title]);
 
   const onEdit = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
