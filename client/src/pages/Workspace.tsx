@@ -2,17 +2,17 @@ import type {
   DraggableLocation,
   DroppableProvided,
   DropResult,
-} from '@hello-pangea/dnd';
-import { DragDropContext, Droppable } from '@hello-pangea/dnd';
-import React, { useContext, useEffect, useState } from 'react';
+} from "@hello-pangea/dnd";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import React, { useContext, useEffect, useState } from "react";
 
-import { CardEvent, ListEvent } from '../common/enums';
-import type { List } from '../common/types';
-import { Column } from '../components/column/column';
-import { ColumnCreator } from '../components/column-creator/column-creator';
-import { SocketContext } from '../context/socket';
-import { reorderService } from '../services/reorder.service';
-import { Container } from './styled/container';
+import { CardEvent, ListEvent } from "../common/enums";
+import type { List } from "../common/types";
+import { Column } from "../components/column/column";
+import { ColumnCreator } from "../components/column-creator/column-creator";
+import { SocketContext } from "../context/socket";
+import { reorderService } from "../services/reorder.service";
+import { Container } from "./styled/container";
 
 export const Workspace = () => {
   const [lists, setLists] = useState<List[]>([]);
@@ -36,11 +36,11 @@ export const Workspace = () => {
 
     if (isNotMoved) return;
 
-    const isReorderColumns = result.type === 'COLUMN';
+    const isReorderColumns = result.type === "COLUMN";
 
     if (isReorderColumns) {
       setLists(
-        reorderService.reorderLists(lists, source.index, destination.index),
+        reorderService.reorderLists(lists, source.index, destination.index)
       );
       socket.emit(ListEvent.REORDER, source.index, destination.index);
 
@@ -61,7 +61,11 @@ export const Workspace = () => {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="board" type="COLUMN" direction="horizontal">
           {(provided: DroppableProvided) => (
-            <Container className="workspace-container" ref={provided.innerRef} {...provided.droppableProps}>
+            <Container
+              className="workspace-container"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
               {lists.map((list: List, index: number) => (
                 <Column
                   key={list.id}

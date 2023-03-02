@@ -1,9 +1,9 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from "react";
 
-import { useComponentVisible } from '../../hooks/useComponentVisible';
-import { BasicText } from './styled/basic-text';
-import { TextContainer } from './styled/text-container';
-import { TextInput } from './styled/text-input';
+import { useComponentVisible } from "../../hooks/useComponentVisible";
+import { BasicText } from "./styled/basic-text";
+import { TextContainer } from "./styled/text-container";
+import { TextInput } from "./styled/text-input";
 
 type Props = {
   text: string;
@@ -14,6 +14,8 @@ export const Text = ({ onChange, text }: Props) => {
   const { ref, isComponentVisible, setIsComponentVisible } =
     useComponentVisible(false);
   const [value, setValue] = useState(text);
+
+  useEffect(() => setValue(text), [text]);
 
   const onEdit = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
@@ -31,7 +33,10 @@ export const Text = ({ onChange, text }: Props) => {
           autoFocus={isComponentVisible}
         />
       ) : (
-        <BasicText className="text-content" onClick={() => setIsComponentVisible(true)}>
+        <BasicText
+          className="text-content"
+          onClick={() => setIsComponentVisible(true)}
+        >
           {value}
         </BasicText>
       )}
