@@ -4,7 +4,7 @@ import type {
   DraggableStateSnapshot,
 } from "@hello-pangea/dnd";
 import { Draggable } from "@hello-pangea/dnd";
-import { CardEvent } from "../../common/enums";
+import { CardEvent, ListEvent } from "../../common/enums";
 
 import type { Card } from "../../common/types";
 import { socket } from "../../context/socket";
@@ -26,6 +26,10 @@ type Props = {
 export const Column = ({ listId, listName, cards, index }: Props) => {
   const createCardHandler = (name: string) => {
     socket.emit(CardEvent.CREATE, listId, name);
+  };
+
+  const deleteListHandler = () => {
+    socket.emit(ListEvent.DELETE, listId);
   };
 
   return (
@@ -50,7 +54,7 @@ export const Column = ({ listId, listName, cards, index }: Props) => {
               bold
             />
             <Splitter />
-            <DeleteButton color="#FFF0" onClick={() => {}} />
+            <DeleteButton color="#FFF0" onClick={deleteListHandler} />
           </Header>
           <CardsList
             listId={listId}
