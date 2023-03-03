@@ -1,9 +1,9 @@
-import { Server, Socket } from "socket.io";
+import { Server, Socket } from 'socket.io';
 
-import { ListEvent } from "../common/enums";
-import { Database } from "../data/database";
-import { ReorderService } from "../services/reorder.service";
-import { ProxyLogger } from "../loggers/reorder.logger";
+import { ListEvent } from '../common/enums';
+import { Database } from '../data/database';
+import { ReorderService } from '../services/reorder.service';
+import { ProxyLogger } from '../loggers/reorder.logger';
 
 abstract class SocketHandler {
   protected db: Database;

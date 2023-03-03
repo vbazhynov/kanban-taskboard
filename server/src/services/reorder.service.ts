@@ -1,5 +1,5 @@
-import { Card } from "../data/models/card";
-import { List } from "../data/models/list";
+import { Card } from '../data/models/card';
+import { List } from '../data/models/list';
 
 export class ReorderService {
   public reorder<T>(items: T[], startIndex: number, endIndex: number): T[] {
@@ -23,14 +23,15 @@ export class ReorderService {
     sourceListId: string;
     destinationListId: string;
   }): List[] {
-    const target: Card = lists.find((list) => list.id === sourceListId)
-      ?.cards?.[sourceIndex];
+    const target: Card = lists.find(list => list.id === sourceListId)?.cards?.[
+      sourceIndex
+    ];
 
     if (!target) {
       return lists;
     }
 
-    const newLists = lists.map((list) => {
+    const newLists = lists.map(list => {
       if (list.id === sourceListId) {
         list = {
           ...list,
