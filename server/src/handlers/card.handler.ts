@@ -11,6 +11,10 @@ export class CardHandler extends SocketHandler {
     socket.on(CardEvent.DELETE, this.deleteCard.bind(this));
     socket.on(CardEvent.COPY, this.copyCard.bind(this));
     socket.on(CardEvent.RENAME, this.renameCard.bind(this));
+    socket.on(
+      CardEvent.CHANGE_DESCRIPTION,
+      this.changeCardDescription.bind(this)
+    );
   }
 
   public createCard(listId: string, cardName: string): void {
@@ -30,7 +34,6 @@ export class CardHandler extends SocketHandler {
   }
 
   public deleteCard(listId: string, cardId: string): void {
-    // console.log(`operation - DELETE, listId ${listId}, cardId ${cardId}`);
     const lists = this.db.getData();
     const list = lists.find((list) => list.id === listId);
 
@@ -71,6 +74,7 @@ export class CardHandler extends SocketHandler {
     );
     this.updateLists();
   }
+
   public renameCard(newTitle: string, listId: string, cardId: string): void {
     const lists = this.db.getData();
     const list = lists.find((list) => list.id === listId);
@@ -79,7 +83,35 @@ export class CardHandler extends SocketHandler {
 
     const card = list.cards.find((card) => card.id === cardId);
     card.name = newTitle;
-    console.log(card.name);
+
+    const index = list.cards.findIndex((card) => card.id === cardId);
+    const newCards = [...list.cards];
+    newCards.splice(index, 1, card);
+
+    const updatedList = {
+      ...list,
+      cards: newCards,
+    };
+
+    this.db.setData(
+      lists.map((list) => (list.id === listId ? updatedList : list))
+    );
+    this.updateLists();
+  }
+
+  public changeCardDescription(
+    cardText: string,
+    listId: string,
+    cardId: string
+  ): void {
+    console.log();
+    const lists = this.db.getData();
+    const list = lists.find((list) => list.id === listId);
+
+    if (!list) return;
+
+    const card = list.cards.find((card) => card.id === cardId);
+    card.description = cardText;
 
     const index = list.cards.findIndex((card) => card.id === cardId);
     const newCards = [...list.cards];

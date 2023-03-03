@@ -18,6 +18,7 @@ type Props = {
   onCopyCard: Function;
   onDeleteCard: Function;
   onChangeTitle: Function;
+  onChangeDescription: Function;
 };
 
 export const CardItem = ({
@@ -27,6 +28,7 @@ export const CardItem = ({
   onCopyCard,
   onDeleteCard,
   onChangeTitle,
+  onChangeDescription,
 }: Props) => {
   const copyCardHandler = () => {
     onCopyCard(card.id);
@@ -38,6 +40,9 @@ export const CardItem = ({
 
   const changeTitleHandler = (title: string) => {
     onChangeTitle(title, card.id);
+  };
+  const changeDescriptionHandler = (cardText: string) => {
+    onChangeDescription(cardText, card.id);
   };
 
   return (
@@ -58,7 +63,7 @@ export const CardItem = ({
           fontSize="large"
           bold={true}
         />
-        <Text text={card.description} onChange={() => {}} />
+        <Text text={card.description} onChange={changeDescriptionHandler} />
         <Footer>
           <DeleteButton onClick={deleteCardHandler} />
           <Splitter />

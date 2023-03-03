@@ -10,6 +10,7 @@ type Props = {
   onCopyCard: Function;
   onDeleteCard: Function;
   onChangeTitle: Function;
+  onChangeDescription: Function;
 };
 
 const List = ({
@@ -18,6 +19,7 @@ const List = ({
   onCopyCard,
   onDeleteCard,
   onChangeTitle,
+  onChangeDescription,
 }: Props) => {
   return (
     <div className="list-container">
@@ -27,6 +29,7 @@ const List = ({
           onCopyCard={onCopyCard}
           onDeleteCard={onDeleteCard}
           onChangeTitle={onChangeTitle}
+          onChangeDescription={onChangeDescription}
         />
         {dropProvided.placeholder}
       </DropZone>

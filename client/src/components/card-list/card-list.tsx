@@ -29,8 +29,11 @@ const CardsList = ({ listId, listType, style, cards }: Props) => {
   };
 
   const changeTitleHandler = (title: string, cardId: string) => {
-    // console.log(`NewTitle - ${title} for card ${cardId} `);
     socket.emit(CardEvent.RENAME, title, listId, cardId);
+  };
+
+  const changeDescriptionHandler = (cardText: string, cardId: string) => {
+    socket.emit(CardEvent.CHANGE_DESCRIPTION, cardText, listId, cardId);
   };
 
   return (
@@ -52,6 +55,7 @@ const CardsList = ({ listId, listType, style, cards }: Props) => {
               onCopyCard={copyCardHandler}
               onDeleteCard={deleteCardHandler}
               onChangeTitle={changeTitleHandler}
+              onChangeDescription={changeDescriptionHandler}
             />
           </ScrollContainer>
         </ListWrapper>
