@@ -7,6 +7,7 @@ import { ListHandler } from "./handlers/list.handler";
 import { ErrorLogger } from "./loggers/error.logger";
 import { ReorderService } from "./services/reorder.service";
 import { eventLogger } from "./handlers/list.handler";
+import { ProxyLogger } from "./loggers/reorder.logger";
 
 const PORT = 3001;
 
@@ -19,7 +20,7 @@ const io = new Server(httpServer, {
 });
 
 const db = Database.Instance;
-const reorderService = new ReorderService();
+const reorderService = new ProxyLogger(new ReorderService());
 
 if (process.env.NODE_ENV !== "production") {
   db.setData(lists);

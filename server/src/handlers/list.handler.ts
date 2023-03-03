@@ -5,7 +5,6 @@ import { ListEvent } from "../common/enums";
 import { List } from "../data/models/list";
 import { EventLogger } from "../loggers/event.logger";
 import { SocketHandler } from "./socket.handler";
-import { ErrorLogger } from "../loggers/error.logger";
 
 export const eventLogger = new EventLogger();
 
