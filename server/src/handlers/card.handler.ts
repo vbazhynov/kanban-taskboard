@@ -1,10 +1,16 @@
 import type { Socket } from "socket.io";
 
+import { LogLevels } from "../common/enums/log.level.enum";
 import { CardEvent } from "../common/enums";
 import { Card } from "../data/models/card";
+import { EventLogger } from "../loggers/event.logger";
 import { SocketHandler } from "./socket.handler";
 
+const eventLogger = new EventLogger();
+
 export class CardHandler extends SocketHandler {
+  private subscribers = [];
+
   public handleConnection(socket: Socket): void {
     socket.on(CardEvent.CREATE, this.createCard.bind(this));
     socket.on(CardEvent.REORDER, this.reorderCards.bind(this));
@@ -15,11 +21,21 @@ export class CardHandler extends SocketHandler {
       CardEvent.CHANGE_DESCRIPTION,
       this.changeCardDescription.bind(this)
     );
+
+    // PATTERN:{Observer}
+    this.subscribe(eventLogger);
   }
 
-  public createCard(listId: string, cardName: string): void {
-    // console.log(`operation - CREATE, listId ${listId}, cardName ${cardName}`);
+  public subscribe(subscriber) {
+    this.subscribers.push(subscriber);
+  }
 
+  // PATTERN:{Observer}
+  private notify = (message: string) => {
+    this.subscribers.forEach((subscriber) => subscriber.update(message));
+  };
+
+  public createCard(listId: string, cardName: string): void {
     const newCard = new Card(cardName, "");
     const lists = this.db.getData();
     const list = lists.find((list) => list.id === listId);
@@ -31,15 +47,22 @@ export class CardHandler extends SocketHandler {
       lists.map((list) => (list.id === listId ? updatedList : list))
     );
     this.updateLists();
+
+    // PATTERN:{Observer}
+    this.notify(
+      `${
+        LogLevels.info
+      } : ${new Date().toISOString()} : Card "${cardName}" Was Created \n`
+    );
   }
 
   public deleteCard(listId: string, cardId: string): void {
     const lists = this.db.getData();
     const list = lists.find((list) => list.id === listId);
-
     if (!list) return;
 
     const index = list.cards.findIndex((card) => card.id === cardId);
+
     const newCards = [...list.cards];
     newCards.splice(index, 1);
     const updatedList = {
@@ -50,6 +73,13 @@ export class CardHandler extends SocketHandler {
       lists.map((list) => (list.id === listId ? updatedList : list))
     );
     this.updateLists();
+
+    // PATTERN:{Observer}
+    this.notify(
+      `${LogLevels.warn} : ${new Date().toISOString()}: Card "${
+        list.cards[index].name
+      }" Was Deleted  \n`
+    );
   }
 
   public copyCard(listId: string, cardId: string): void {
@@ -73,6 +103,13 @@ export class CardHandler extends SocketHandler {
       lists.map((list) => (list.id === listId ? updatedList : list))
     );
     this.updateLists();
+
+    // PATTERN:{Observer}
+    this.notify(
+      `${LogLevels.info} : ${new Date().toISOString()}: Card "${
+        list.cards[index].name
+      }" Was Cloned \n`
+    );
   }
 
   public renameCard(newTitle: string, listId: string, cardId: string): void {
@@ -82,6 +119,13 @@ export class CardHandler extends SocketHandler {
     if (!list) return;
 
     const card = list.cards.find((card) => card.id === cardId);
+
+    // PATTERN:{Observer}
+    this.notify(
+      `${LogLevels.warn} : ${new Date().toISOString()}: Card "${
+        card.name
+      }" Was Renamed to "${newTitle}" \n`
+    );
     card.name = newTitle;
 
     const index = list.cards.findIndex((card) => card.id === cardId);
@@ -104,7 +148,6 @@ export class CardHandler extends SocketHandler {
     listId: string,
     cardId: string
   ): void {
-    console.log();
     const lists = this.db.getData();
     const list = lists.find((list) => list.id === listId);
 
@@ -112,6 +155,13 @@ export class CardHandler extends SocketHandler {
 
     const card = list.cards.find((card) => card.id === cardId);
     card.description = cardText;
+
+    // PATTERN:{Observer}
+    this.notify(
+      `${LogLevels.info} : ${new Date().toISOString()}: Description of Card "${
+        card.name
+      }" Was Changed \n`
+    );
 
     const index = list.cards.findIndex((card) => card.id === cardId);
     const newCards = [...list.cards];
@@ -147,6 +197,7 @@ export class CardHandler extends SocketHandler {
       sourceListId,
       destinationListId,
     });
+
     this.db.setData(reordered);
     this.updateLists();
   }
